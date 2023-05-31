@@ -1,0 +1,9 @@
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: budget-helper
+    ports:
+      - "5432:5432"
