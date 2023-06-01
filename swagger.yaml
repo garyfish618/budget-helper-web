@@ -6,40 +6,25 @@ info:
 paths:
   /budget-months:
     get:
-      summary: 'Returns a list of all budget months'
+      summary: 'Returns budget month(s)'
+      description: 'Providing a budget month ID will return the specific budget month for that ID. None will return all budget months'
+      parameters:
+        - name: budgetId
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: 'Successful response'
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      description: ID of the budget month
-                      example: 1
-                    month:
-                      type: integer
-                      description: Month of the budget month
-                      example: 1
-                    year:
-                      type: integer
-                      description: Year of the budget month
-                      example: 2023
-                    extraIncome:
-                      type: string
-                      description: Dollar amount (as a floating point) in extra income for the budget month
-                      example: "20.25"
-                    categoryIds:
-                      type: array
-                      description: List of BudgetMonthCategories associated to this budget month
-                      example: [1, 2, 3]
-
-                  
-
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: '#/components/schemas/BudgetMonth'
+                  - $ref: '#/components/schemas/BudgetMonth'
     post:
       summary: 'Add a budget month'
       requestBody:
@@ -49,12 +34,15 @@ paths:
               type: object
               properties:
                 month:
+                  description: Month of the new budget month
                   type: integer
                   example: 9
                 year:
+                  description: Year of the new budget month
                   type: integer
                   example: 2023
-                categoryIds:
+                categoryTemplateIds:
+                  description: ID of the category template to add
                   type: array
                   example: [1,2]
       responses:
@@ -69,5 +57,271 @@ paths:
                     type: integer
                     description: ID of the newly created budget month
                     example: 1
+        '400':
+          description: Malformed request
         '409':
           description: Conflict. A budget month with that month and year already exists
+
+  /budget-months/{id}:
+    patch:
+      summary: 'Update a budget month by ID'
+      description: "Update extra income of a budget month"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the budget month to "Update
+          schema:
+            type: integer
+      requestBody:
+        description: Array of updates to apply to budget month
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                updates:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      field:
+                        type: string
+                        enum:
+                          - extraIncome
+                      value:
+                        type: string
+                        description: Amount to set extra income to in dollars
+                        example: 23.05
+
+      responses:
+        '200':
+          description: Budget month updated successfully
+
+  /budget-category/{id}:
+    patch:
+      summary: Update a budget category by ID
+      description: Update name and/or amount budgeted to a budget category
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the budget category to update
+          schema:
+            type: integer
+      requestBody:
+        description: Array of updates to apply to budget category
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                updates:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      field:
+                        type: string
+                        enum:
+                          - name
+                          - amountBudgeted
+                      value:
+                        type: string
+                        description: New value for field
+                        example: "Bills & Utils"
+      responses:
+        '200': 
+          description: Budget category updated successfully
+
+  /budget-category-templates:
+    get:
+      summary: 'Returns a budget category/categories'
+      description: 'Providing a budget category ID will return the specific budget category for that ID. None will return all budget months'
+      parameters:
+        - name: budgetId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: '#/components/schemas/BudgetMonth'
+                  - $ref: '#/components/schemas/BudgetMonth'
+    
+  /transactions:
+    post:
+      summary: 'Add a transaction'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  description: Description of the new transaction
+                  type: string
+                  example: "Vons grocery store"
+                amount:
+                  description: Amount of money spent on this new transaction in dollars
+                  type: string
+                  example: "20.25"
+                date:
+                  description: Date of this new transaction in ISO-8601
+                  format: date-time
+                  type: string
+                  example: "2023-01-24"
+                transactionType:
+                  description: Type of this new transaction
+                  type: string
+                  enum:
+                    - "AMEX"
+                    - "NFCUDebit"
+                    - "NFCUCredit"
+                  example: "AMEX"
+                budgetCategoryId:
+                  description: The category ID that this new transaction belongs transaction
+                  type: integer
+                  example: 1
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID of the newly created transaction
+                    example: 1
+        '400':
+          description: Malformed request
+
+  /transactions/{id}:
+    patch:
+      summary: Update a transaction by ID
+      description: Update description, amount, date, transactionType, and/or budget category ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the transaction to update
+          schema:
+            type: integer
+      requestBody:
+        description: Array of updates to apply to transaction
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                updates:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      field:
+                        type: string
+                        enum:
+                          - description
+                          - amount
+                          - date
+                          - transactionType
+                          - budgetCategoryId
+                        example: amount
+                      value:
+                        type: string
+                        description: New value for field
+                        example: "23.05"
+      responses:
+        '200': 
+          description: Budget category updated successfully
+
+
+
+components:
+  schemas:
+    BudgetMonth:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID of the budget month
+          example: 1
+        month:
+          type: integer
+          description: Month of the budget month
+          example: 1
+        year:
+          type: integer
+          description: Year of the budget month
+          example: 2023
+        extraIncome:
+          type: string
+          description: Dollar amount (as a floating point) in extra income for the budget month
+          example: "20.25"
+        categories:
+          type: array
+          description: List of BudgetMonthCategories associated to this budget month
+          items:
+            $ref: '#/components/schemas/BudgetCategory'
+    BudgetCategory:
+      type: object
+      properties:
+        id: 
+          type: integer
+          description: ID of the budget category
+          example: 1
+        name:
+          type: string
+          description: Name of the budget category
+          example: "Food & Groceries"
+        amountBudgeted:
+          type: string
+          description: Amount budgeted for this category in dollars
+          example: "20.25"
+        transactions:
+          type: array
+          description: List of transactions associated to this category
+          items:
+            $ref: '#/components/schemas/Transaction'
+    Transaction:
+      type: object
+      properties:
+        id: 
+          type: integer
+          description: ID of the transactions
+          example: 1
+        description:
+          type: string
+          description: A description of the transactions
+          example: "Vons grocery store"
+        amount:
+          type: string
+          description: The amount spent on this transactions in dollars
+          example: "20.25"
+        date:
+          type: string
+          format: date-time
+          description: A date field represented as a string in ISO-8601 format
+          example: "2023-01-24"
+        transactionType:
+          type: string
+          description: The type of transaction
+          example: "AMEX"
+        
+
+
+
+    
+        
+
+      
