@@ -1,0 +1,73 @@
+openapi: 3.0.0
+info:
+  version: '1.0.0'
+  title: 'Budget Helper API'
+  description: 'API documentation for Budget Helper'
+paths:
+  /budget-months:
+    get:
+      summary: 'Returns a list of all budget months'
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: ID of the budget month
+                      example: 1
+                    month:
+                      type: integer
+                      description: Month of the budget month
+                      example: 1
+                    year:
+                      type: integer
+                      description: Year of the budget month
+                      example: 2023
+                    extraIncome:
+                      type: string
+                      description: Dollar amount (as a floating point) in extra income for the budget month
+                      example: "20.25"
+                    categoryIds:
+                      type: array
+                      description: List of BudgetMonthCategories associated to this budget month
+                      example: [1, 2, 3]
+
+                  
+
+    post:
+      summary: 'Add a budget month'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                month:
+                  type: integer
+                  example: 9
+                year:
+                  type: integer
+                  example: 2023
+                categoryIds:
+                  type: array
+                  example: [1,2]
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID of the newly created budget month
+                    example: 1
+        '409':
+          description: Conflict. A budget month with that month and year already exists

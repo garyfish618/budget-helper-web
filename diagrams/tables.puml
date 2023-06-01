@@ -1,0 +1,35 @@
+@startuml
+class BudgetMonth {
+  -id: int
+  -month: string
+  -year: int
+  -extraIncome: string
+  
+}
+
+class BudgetMonthCategory {
+    -id: int
+    -name: string
+    -amountBudgeted: string
+    -budgetMonthId: int
+}
+
+class CategoryTemplate {
+    -id: int
+    -name: string
+    -amountBudgeted: string
+}
+
+class Transaction {
+    -id: int
+    -description: string
+    -amount: string
+    -date: date 
+    -transactionType: string
+    -budgetCategoryId
+
+}
+
+BudgetMonth "1" --> "0..n" BudgetMonthCategory
+BudgetMonthCategory "1" --> "0..n" Transaction
+@enduml
