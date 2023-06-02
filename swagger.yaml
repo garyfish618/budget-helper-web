@@ -136,25 +136,16 @@ paths:
 
   /budget-category-templates:
     get:
-      summary: 'Returns a budget category/categories'
-      description: 'Providing a budget category ID will return the specific budget category for that ID. None will return all budget months'
-      parameters:
-        - name: budgetId
-          in: query
-          required: false
-          schema:
-            type: string
+      summary: 'Get a list of budget category templates'
       responses:
         200:
           description: 'Successful response'
           content:
             application/json:
               schema:
-                oneOf:
-                  - type: array
-                    items:
-                      $ref: '#/components/schemas/BudgetMonth'
-                  - $ref: '#/components/schemas/BudgetMonth'
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryTemplate'
     
   /transactions:
     post:
@@ -317,6 +308,23 @@ components:
           type: string
           description: The type of transaction
           example: "AMEX"
+    CategoryTemplate:
+      type: object
+      properties:
+        id: 
+          type: integer
+          description: ID of the category template
+          example: 1
+        name:
+          type: string
+          description: Name of the category template
+          example: "Entertainment"
+        amountBudgeted:
+          type: string
+          description: Amount to be budgeted for this category template
+          example: "23.05"
+
+
         
 
 
