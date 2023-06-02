@@ -13,6 +13,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: "<http://localhost:3000>" }))
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
+app.use(function(err: Error, req: Request, res: Response, next) {
+    res.status(500).send("Unexpected internal server error")
+
+})
+
+
 app.get("/", (req: Request, res: Response) => {
     res.send("Healthy")
 

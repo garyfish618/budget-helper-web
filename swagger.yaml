@@ -25,6 +25,8 @@ paths:
                     items:
                       $ref: '#/components/schemas/BudgetMonth'
                   - $ref: '#/components/schemas/BudgetMonth'
+        404:
+          description: "Budget month not found"
     post:
       summary: 'Add a budget month'
       requestBody:
