@@ -6,7 +6,7 @@ info:
 paths:
   /budget-months:
     get:
-      summary: 'Returns budget month(s)'
+      summary: 'Returns all budget months'
       description: 'Providing a budget month ID will return the specific budget month for that ID. None will return all budget months'
       parameters:
         - name: budgetId
@@ -20,11 +20,9 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - type: array
-                    items:
-                      $ref: '#/components/schemas/BudgetMonth'
-                  - $ref: '#/components/schemas/BudgetMonth'
+                type: array
+                items:
+                  $ref: '#/components/schemas/BudgetMonth'
         404:
           description: "Budget month not found"
     post:
@@ -65,6 +63,25 @@ paths:
           description: Conflict. A budget month with that month and year already exists
 
   /budget-months/{id}:
+    get:
+      summary: 'Retrieve a budget month'
+      description: 'Find a budget month by budget month ID'
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the budget month to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 'Successful response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BudgetMonth'
+        404:
+          description: "Budget month not found"
     patch:
       summary: 'Update a budget month by ID'
       description: "Update extra income of a budget month"

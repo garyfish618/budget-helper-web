@@ -4,38 +4,54 @@ datasource db {
 }
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 model BudgetMonth {
-  id  Int @id @default(autoincrement())
-  month Int
-  year Int
-  extraIncome String @default("0")
-  categories  BudgetMonthCategory? @relation(fields: [budgetMonthCategoryId], references: [id])
-  budgetMonthCategoryId Int?
+  id          Int                   @id @default(autoincrement())
+  month       Int
+  year        Int
+  extraIncome String                @default("0")
+  categories  BudgetMonthCategory[]
+
+  @@unique([month, year], name: "monthYear")
 }
 
 model BudgetMonthCategory {
-  id Int @id @default(autoincrement())
-  name String
+  id             Int           @id @default(autoincrement())
+  name           String
   amountBudgeted String
-  budgetMonths BudgetMonth[]
-  transactions  Transaction? @relation(fields: [transactionId], references: [id])
-  transactionId Int?
+  budgetMonth    BudgetMonth   @relation(fields: [budgetMonthId], references: [id])
+  budgetMonthId  Int
+  transactions   Transaction[]
+  // transactions   BudgetTransaction[]
+  // Transaction    Transaction[]
 }
 
 model CategoryTemplate {
-  id Int @id @default(autoincrement())
-  name String @unique
+  id             Int    @id @default(autoincrement())
+  name           String @unique
   amountBudgeted String
 }
 
+// model BudgetTransaction {
+//   id               Int @id @default(autoincrement())
+//   budgetCategoryId Int
+//   transactionId    Int
+
+//   budgetCategory BudgetMonthCategory @relation(fields: [budgetCategoryId], references: [id])
+//   transaction    Transaction         @relation(fields: [transactionId], references: [id])
+
+//   @@unique([budgetCategoryId, transactionId])
+// }
+
 model Transaction {
-  id Int @id @default(autoincrement())
-  description String
-  amount String
-  date DateTime
-  transactionType String 
-  budgetCategories BudgetMonthCategory[]
+  id                    Int                 @id @default(autoincrement())
+  description           String
+  amount                String
+  date                  DateTime
+  transactionType       String
+  // budgetTransaction BudgetTransaction[]
+  budgetMonthCategory   BudgetMonthCategory @relation(fields: [budgetMonthCategoryId], references: [id])
+  budgetMonthCategoryId Int
 }
