@@ -15,6 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: "<http://localhost:3000>" }))
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use((err:Error, req:Request, res:Response, next:NextFunction) => {
+    console.error(err)
     res.status(500).send('Unexpected server error');
 });
 

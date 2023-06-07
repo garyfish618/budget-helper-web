@@ -1,6 +1,7 @@
 import {Request, Response} from 'express';
 import BudgetMonth from '../models/BudgetMonth'
 import prisma from "../../lib/prisma";
+import { ResourceNotFound } from "@tsed/common";
 
 export class BudgetMonthController {
     async getAllBudgetMonths(req: Request, res: Response, next: Function) {
@@ -14,25 +15,16 @@ export class BudgetMonthController {
 
     async getBudgetMonth(req: Request, res: Response, next: Function) {
         try {
-            const budgetId:string | undefined = req.query['budgetId'] ? String(req.query['budgetId']) : undefined
-            if (budgetId !== undefined) {
-                
-                const record = await prisma.budgetMonth.findUnique({
-                    where: {
-                        id: parseInt(budgetId)
-                    }    
-                })
-        
-                if (!record) {
-                    return res.status(404).send() 
-                }
-    
-                return res.status(200).json(record)
+            const id:string = req.params.id 
+            if (id !== undefined) {
+                return res.status(200).json(await BudgetMonth.getBudgetMonth(parseInt(id)))
             }
-        
-            const allMonths = await prisma.budgetMonth.findMany()
-            res.status(200).json(allMonths)
-        } catch (error){
+        } catch (error) {
+            console.log(error instanceof Error)
+            if (error instanceof ResourceNotFound) {
+                return res.status(404).json({})
+            }
+ 
             next(error)
         }
     }
