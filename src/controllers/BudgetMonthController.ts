@@ -1,6 +1,8 @@
 import {Request, Response} from 'express';
 import BudgetMonth from '../models/BudgetMonth'
+import CategoryTemplate from '../models/CategoryTemplate';
 import ResourceNotFound from '../exceptions/ResourceNotFound';
+import { Prisma } from '@prisma/client'
 
 export class BudgetMonthController {
     async getAllBudgetMonths(req: Request, res: Response, next: Function) {
@@ -28,6 +30,39 @@ export class BudgetMonthController {
     }
 
     async createBudgetMonth(req: Request, res: Response, next: Function) {
-        console.log("Got here!")
+        const { categoryTemplateIds, month, year } = req.body
+        try {
+            
+            const budgetMonthId = await BudgetMonth.createBudgetMonth(new BudgetMonth(parseInt(month), parseInt(year)))
+            // TODO: const categoryTemplates: CategoryTemplate[] = await CategoryTemplate.getManyCategoryTemplates(categoryTemplateIds)
+            return res.status(201).json({id: budgetMonthId})
+            
+        } catch(error: any) {
+            next(error)
+        }
+    }
+
+    async updateBudgetMonth(req: Request, res: Response, next: Function) {
+        const { id } = req.params 
+        const { updates } = req.body
+        
+
+        try {
+            let data:any = {}
+            for (let update of updates) {
+                data[update.field] = update.value
+            }
+
+            const budgetMonth = await BudgetMonth.updateBudgetMonth(parseInt(id), data)
+            return res.status(200).json(budgetMonth)
+        } catch(error: any) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                return res.status(404).json({message: "Budget month not found"})
+            }
+            
+            next(error)
+        }
+
+
     }
 }

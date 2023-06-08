@@ -1,7 +1,17 @@
+import { Prisma } from '@prisma/client'
 import prisma from "../../lib/prisma";
 import ResourceNotFound from "../exceptions/ResourceNotFound";
 
 export default class BudgetMonth {
+    month: number
+    year: number
+
+    constructor(month: number, year: number) {
+        this.month = month
+        this.year = year
+
+    }
+
     static async getBudgetMonth(budgetId: number): Promise<BudgetMonth | null>  {
         try{
             const record = await prisma.budgetMonth.findUnique({
@@ -46,14 +56,46 @@ export default class BudgetMonth {
         }
     }
 
-    static async createBudgetMonth(month: Object) {
+    static async createBudgetMonth(budgetMonth: BudgetMonth) {
         try {
-            await prisma.budgetMonth.create({
+            const createdMonth = await prisma.budgetMonth.create({
                 data: {
-                    ...month
+                    month: budgetMonth.month,
+                    year: budgetMonth.year,
+                    extraIncome: "0.00"
+                }
 
+            })
+
+            return createdMonth.id
+
+        } catch(error: any) {
+            throw new Error(`Failed to create a budget month. ${error.message}`)
+        }
+    }
+
+    static async updateBudgetMonth(budgetMonthId: number, data: object) {
+        try {
+            const updatedMonth = await prisma.budgetMonth.update({
+                where: { id: budgetMonthId },
+                data: data,
+                include: {
+                    categories: {
+                        include: {
+                            transactions: true
+                        }
+                    }
                 }
             })
+
+            return updatedMonth
+
+        } catch(error: any) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                throw error
+            }  
+
+            throw new Error(`Failed to update budget month with ID ${budgetMonthId}. ${error.message}`)
         }
 
     }

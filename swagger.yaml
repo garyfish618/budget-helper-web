@@ -116,6 +116,8 @@ paths:
       responses:
         '200':
           description: Budget month updated successfully
+        '404':
+          description: "Budget month not found"
 
   /budget-category/{id}:
     patch:
