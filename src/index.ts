@@ -9,12 +9,16 @@ export const app: Application = express()
 
 const swaggerDocument = YAML.load("./swagger.yaml")
 
-app.use(routes)
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: "<http://localhost:3000>" }))
+app.use(routes)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use((err:Error, req:Request, res:Response, next:NextFunction) => {
+    if (err instanceof SyntaxError && 'body' in err) {
+        res.status(400).send({ error: "Invalid JSON" })
+    }
+    
     console.error(err)
     res.status(500).send('Unexpected server error');
 });
