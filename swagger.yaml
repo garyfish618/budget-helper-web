@@ -257,8 +257,6 @@ paths:
         '200': 
           description: Budget category updated successfully
 
-
-
 components:
   schemas:
     BudgetMonth:
@@ -276,6 +274,10 @@ components:
           type: integer
           description: Year of the budget month
           example: 2023
+        overBudget:
+          type: boolean
+          description: Determines if this budget month is over budget
+          exmaple: true
         extraIncome:
           type: string
           description: Dollar amount (as a floating point) in extra income for the budget month
