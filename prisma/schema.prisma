@@ -11,6 +11,7 @@ model BudgetMonth {
   id          Int                   @id @default(autoincrement())
   month       Int
   year        Int
+  overBudget  Boolean @default(false)
   extraIncome String                @default("0")
   categories  BudgetMonthCategory[]
 
