@@ -57,6 +57,18 @@ paths:
                     type: integer
                     description: ID of the newly created budget month
                     example: 1
+                  month:
+                    description: Month of the new budget month
+                    type: integer
+                    example: 9
+                  year:
+                    description: Year of the new budget month
+                    type: integer
+                    example: 2023
+                  categoryTemplateIds:
+                    description: ID of the category template to add
+                    type: array
+                    example: [1,2]
         '400':
           description: Malformed request
         '409':

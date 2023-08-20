@@ -45,7 +45,25 @@ const categoryTemplates = [
     }
 ]
 
+
+const users = [
+    {
+        email: "demo@test.com",
+        password: "$2b$10$VhS0k4cKRTYXyQmd3MBtMenjTm1DunKqMSaF91DYD74T3qG7TWcUK", // password = "password"
+        budgetMonths: {
+            create: [
+                budgetMonths[0]
+            ]
+        },
+        categoryTemplates: {
+            create: [
+                categoryTemplates[0]
+            ]
+        }
+    }
+]
+
+
 export {
-    budgetMonths,
-    categoryTemplates
+    users
 }

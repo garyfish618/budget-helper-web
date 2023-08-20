@@ -7,6 +7,14 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model User {
+  id         Int     @id @default(autoincrement())
+  email      String  @unique
+  password   String
+  budgetMonths BudgetMonth[]
+  categoryTemplates CategoryTemplate[]
+} 
+
 model BudgetMonth {
   id          Int                   @id @default(autoincrement())
   month       Int
@@ -14,6 +22,8 @@ model BudgetMonth {
   overBudget  Boolean @default(false)
   extraIncome String                @default("0")
   categories  BudgetMonthCategory[]
+  user        User  @relation(fields: [userId], references: [id])
+  userId      Int
 
   @@unique([month, year], name: "monthYear")
 }
@@ -33,6 +43,8 @@ model CategoryTemplate {
   id             Int    @id @default(autoincrement())
   name           String @unique
   amountBudgeted String
+  user           User  @relation(fields: [userId], references: [id])
+  userId         Int
 }
 
 // model BudgetTransaction {

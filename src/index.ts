@@ -4,6 +4,7 @@ import cors from 'cors'
 import swaggerUi from "swagger-ui-express"
 import YAML from "yamljs"
 import routes from './routes/routes'
+import passport from "passport"
 
 export const app: Application = express()
 

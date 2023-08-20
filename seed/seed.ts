@@ -1,21 +1,24 @@
 import { PrismaClient } from '@prisma/client'
-import { budgetMonths, categoryTemplates } from "./data"
+import { users } from "./data"
 
 const prisma = new PrismaClient()
 
 async function main() {
-  
-    for (const budgetMonth of budgetMonths) {
-        await prisma.budgetMonth.create({
-            data: {     
-                ...budgetMonth                
-            }
-        })
-    }
 
-    // for (const categoryTemplate of categoryTemplates) {
-    //     await prisma.categoryTemplate.create({data: categoryTemplate})
-    // }
+    for (const user of users) {
+        try {
+            await prisma.user.create({
+                data: {     
+                    ...user               
+                }
+            })
+        }
+
+        catch(e: any) {
+            console.log(`Could not create user. User most likely already exists`)
+            continue
+        }
+    }
 }
 
 main()

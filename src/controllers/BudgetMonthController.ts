@@ -1,6 +1,5 @@
 import {Request, Response} from 'express';
 import BudgetMonth from '../models/BudgetMonth'
-import CategoryTemplate from '../models/CategoryTemplate';
 import ResourceNotFound from '../exceptions/ResourceNotFound';
 import { Prisma } from '@prisma/client'
 
@@ -32,10 +31,8 @@ export class BudgetMonthController {
     async createBudgetMonth(req: Request, res: Response, next: Function) {
         const { categoryTemplateIds, month, year } = req.body
         try {
-            
             const budgetMonthId = await BudgetMonth.createBudgetMonth(new BudgetMonth(parseInt(month), parseInt(year)))
-            // TODO: const categoryTemplates: CategoryTemplate[] = await CategoryTemplate.getManyCategoryTemplates(categoryTemplateIds)
-            return res.status(201).json({id: budgetMonthId})
+            return res.status(201).json({id: budgetMonthId, month, year, categoryTemplateIds})
             
         } catch(error: any) {
             next(error)
@@ -62,7 +59,5 @@ export class BudgetMonthController {
             
             next(error)
         }
-
-
     }
 }

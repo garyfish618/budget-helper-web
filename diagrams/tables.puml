@@ -1,4 +1,12 @@
 @startuml
+
+class User {
+    -id: int
+    -email: string
+    -password: string
+}
+
+
 class BudgetMonth {
   -id: int
   -month: string
@@ -26,10 +34,12 @@ class Transaction {
     -amount: string
     -date: date 
     -transactionType: string
-    -budgetCategoryId
+    -budgetCategoryId: int
 
 }
 
+User "1" --> "0..n" BudgetMonth
+User "1" --> "0..n" CategoryTemplate
 BudgetMonth "1" --> "0..n" BudgetMonthCategory
 BudgetMonthCategory "1" --> "0..n" Transaction
 @enduml
