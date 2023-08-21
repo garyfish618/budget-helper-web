@@ -4,7 +4,6 @@ import cors from 'cors'
 import swaggerUi from "swagger-ui-express"
 import YAML from "yamljs"
 import routes from './routes/routes'
-import passport from "passport"
 
 export const app: Application = express()
 
@@ -26,7 +25,6 @@ app.use((err:Error, req:Request, res:Response, next:NextFunction) => {
 
 app.get("/", (req: Request, res: Response) => {
     res.send("Healthy")
-
 })
 
 const PORT = process.env.PORT || 8000
