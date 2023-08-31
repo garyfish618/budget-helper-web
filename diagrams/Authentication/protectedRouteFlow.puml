@@ -1,0 +1,25 @@
+@startuml
+actor User as user
+entity Backend as backend
+entity Passport as passport
+database Database as database
+
+user -> backend: Makes a backend call (headers: jwtToken)
+alt The route is protected 
+    backend -> passport: Authenticate jwtToken
+    passport -> database: Get user from jwtToken
+
+    alt The user exists and token has not expired
+        passport -> backend: Provide route
+        backend -> user: Returns route
+
+    else User does not exist or the token has expired
+        passport -> backend: Throw authentication error
+        backend -> user : Error handler returns 401 Unauthorized
+    end
+
+else The route is not protected 
+    backend -> user: Returns route
+
+end
+@enduml

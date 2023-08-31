@@ -4,6 +4,93 @@ info:
   title: 'Budget Helper API'
   description: 'API documentation for Budget Helper'
 paths:
+  /register: 
+    post:
+      summary: 'Register a new user'
+      description: 'Register a new user with an email and password'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  description: Email to register
+                  type: string
+                  example: "user@user.io"
+                password:
+                  description: Password to register
+                  type: string
+                  example: "password"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID of the newly created user
+                    example: 1
+                  email:
+                    description: Email of the newly created user
+                    type: string
+                    example: "user@user.io"
+        '400':
+          description: Malformed request
+        '409':
+          description: Conflict. A user with that email already exists
+  /login:
+    post:
+      summary: 'Login a user'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  description: Email to login
+                  type: string
+                  example: "user@user.io"
+                password:
+                  description: Password to login
+                  type: string
+                  example: "password"
+      responses:
+        '200':
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID of the logged in user
+                    example: 1
+                  email:
+                    description: Email of the logged in user
+                    type: string
+                    example: "user@user.io"
+                  token:
+                    type: string
+                    description: JWT token of the logged in user
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc3QuaW8ifQ.CuqNW9Falw3_pxSdIW5is2gYgjddBS6fOVdcV7UK62c"
+        '400':
+          description: Malformed request
+        '401':
+          description: Unauthorized. Invalid credentials
+  /logout:
+    delete:
+      summary: 'Log out the session user'
+      responses:
+        '200':
+          description: Logged out user
+
+
   /budget-months:
     get:
       summary: 'Returns all budget months'
@@ -167,9 +254,9 @@ paths:
         '200': 
           description: Budget category updated successfully
 
-  /budget-category-templates:
+  /category-templates:
     get:
-      summary: 'Get a list of budget category templates'
+      summary: 'Get a list of category templates'
       responses:
         200:
           description: 'Successful response'
@@ -179,6 +266,45 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/CategoryTemplate'
+    post:
+      summary: 'Create a category templates'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: Name of the category template
+                  type: string
+                  example: "Entertainment"
+                amountBudgeted:
+                  description: Amount budgeted for this category template
+                  type: string
+                  example: "23.05"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID of the newly created budget month
+                    example: 1
+                  name:
+                    description: Name of the category template
+                    type: string
+                    example: "Entertainment"
+                  amountBudgeted:
+                    description: Amount budgeted for this category template
+                    type: string
+                    example: "23.05"
+        '400':
+          description: Malformed request
+
     
   /transactions:
     post:
@@ -289,7 +415,7 @@ components:
         overBudget:
           type: boolean
           description: Determines if this budget month is over budget
-          exmaple: true
+          example: true
         extraIncome:
           type: string
           description: Dollar amount (as a floating point) in extra income for the budget month

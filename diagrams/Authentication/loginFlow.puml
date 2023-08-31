@@ -1,0 +1,25 @@
+@startuml
+actor User as user
+entity Backend as backend
+database Database as database
+
+
+user -> backend: POST /login
+alt Valid request 
+    backend -> database: Get user by email
+    database -> backend: Return user (email and password hash)
+    backend -> backend: Comapre password hashes
+
+    alt Valid password
+        backend -> backend: Generate JWT token(user, expireIn: 15 minutes)
+        backend -> user: 200 response (body: id, email, token)
+        user-> user: Saves token in localStorage
+
+    else Invalid password
+        backend -> user: 401 Unauthorized
+    end
+
+else Malformed request
+    backend -> user: 400 response (Malformed request)
+end
+@enduml

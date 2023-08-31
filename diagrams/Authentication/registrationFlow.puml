@@ -1,0 +1,18 @@
+@startuml
+actor User as user
+entity Backend as backend
+database Database as database
+
+
+user -> backend: POST /register
+alt Valid request 
+    backend -> database: Create new user
+    backend -> user: 201 response (body: email & ID)
+
+else Malformed request
+    backend -> user: 400 response (Malformed request)
+
+else User already exists with email
+    backend -> user: 409 response (Conflict)
+end
+@enduml
