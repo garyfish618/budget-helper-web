@@ -1,8 +1,14 @@
 import {Request, Response} from 'express'
 import User from '../models/User'
+import {User as PrismaUser} from "@prisma/client"
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import passport from 'passport'
+import env from 'dotenv'
 
-class UserController {
+env.config()
+
+export class UserController {
     async createUser(req: Request, res: Response, next: Function) {
         const { email, password } = req.body 
         try {
@@ -16,6 +22,31 @@ class UserController {
 
     }
 
-}
+    async loginUser(req: Request, res: Response) {
+        const { id, email } = req.user as PrismaUser
+            
+        const secretKey: string | undefined = process.env.JWT_KEY
 
-export default UserController
+        if (!secretKey) {
+            return res.status(500)
+        }
+
+        if (!req.user) {
+            return res.status(401).json({
+                message: "Invalid credentials"
+            })
+        } 
+        const payload = {
+            id,
+            email
+        }
+
+        const token = jwt.sign(payload, secretKey, {expiresIn: '15m'})
+
+        return res.status(200).json({
+            ...payload,
+            token
+
+        })
+    }
+}

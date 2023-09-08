@@ -2,15 +2,17 @@ import { body, param, validationResult } from "express-validator"
 import prisma from "../../lib/prisma";
 import { Request, Response, NextFunction } from 'express';
 
-const validateNewUser = [
+const validateUser = [
     body('email').exists().withMessage("Email must be present")
     .isEmail().withMessage("Email is not valid"),
     body('password').exists().withMessage("Password must be present"),
     (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req)
+
         if(!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() })
         }
+        return next()
     }
 ]
 
@@ -38,6 +40,6 @@ async function isUniqueInUserTable(email:string) {
 }
 
 export {
-    validateNewUser,
+    validateUser,
     validateNonExistingUser
 }

@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import {User as PrismaUser} from "@prisma/client"
 import prisma from "../../lib/prisma"
 import ResourceNotFound from "../exceptions/ResourceNotFound";
 
@@ -30,11 +30,15 @@ export default class User {
 
     static async getUser(email: string) {
         try {
-            const record = await prisma.user.findUnique({
+            const record:PrismaUser|null = await prisma.user.findUnique({
                 where: {
                     email: email
                 }
             })
+
+            if (!record) {
+                throw ResourceNotFound
+            }
 
             return record
         } catch(error: any) {
@@ -42,7 +46,7 @@ export default class User {
                 throw error
             }
 
-            throw new Error(`Failed to fetch Budget Month Record with ID ${budgetId}. ${error.message}`)
+            throw new Error(`Failed to fetch user with email ${email}. ${error.message}`)
         }
     }
 }
