@@ -83,18 +83,9 @@ paths:
           description: Malformed request
         '401':
           description: Unauthorized. Invalid credentials
-  /logout:
-    delete:
-      summary: 'Log out the session user'
-      responses:
-        '200':
-          description: Logged out user
-
-
   /budget-months:
     get:
-      summary: 'Returns all budget months'
-      description: 'Providing a budget month ID will return the specific budget month for that ID. None will return all budget months'
+      summary: 'Returns all budget months for the signed in user'
       parameters:
         - name: budgetId
           in: query
@@ -110,6 +101,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/BudgetMonth'
+        401:
+          description: "Unauthorized"
         404:
           description: "Budget month not found"
     post:
@@ -158,13 +151,15 @@ paths:
                     example: [1,2]
         '400':
           description: Malformed request
+        '401':
+          description: "Unauthorized"
         '409':
           description: Conflict. A budget month with that month and year already exists
 
   /budget-months/{id}:
     get:
       summary: 'Retrieve a budget month'
-      description: 'Find a budget month by budget month ID'
+      description: 'Find a budget month by budget month ID. ID must be owned by user'
       parameters:
         - in: path
           name: id
@@ -179,6 +174,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BudgetMonth'
+        401:
+          description: "Unauthorized"
         404:
           description: "Budget month not found"
     patch:
@@ -251,12 +248,12 @@ paths:
                         description: New value for field
                         example: "Bills & Utils"
       responses:
-        '200': 
+        200: 
           description: Budget category updated successfully
 
   /category-templates:
     get:
-      summary: 'Get a list of category templates'
+      summary: 'Get a list of category templates for this user'
       responses:
         200:
           description: 'Successful response'
@@ -266,6 +263,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/CategoryTemplate'
+        401:
+          description: "Unauthorized"
     post:
       summary: 'Create a category templates'
       requestBody:
@@ -283,7 +282,7 @@ paths:
                   type: string
                   example: "23.05"
       responses:
-        '201':
+        201:
           description: Created
           content:
             application/json:
@@ -302,8 +301,10 @@ paths:
                     description: Amount budgeted for this category template
                     type: string
                     example: "23.05"
-        '400':
+        400:
           description: Malformed request
+        401:
+          description: "Unauthorized"
 
     
   /transactions:
@@ -341,7 +342,7 @@ paths:
                   type: integer
                   example: 1
       responses:
-        '201':
+        201:
           description: Created
           content:
             application/json:
@@ -352,8 +353,10 @@ paths:
                     type: integer
                     description: ID of the newly created transaction
                     example: 1
-        '400':
+        400:
           description: Malformed request
+        401:
+          description: "Unauthorized"
 
   /transactions/{id}:
     patch:
@@ -392,8 +395,11 @@ paths:
                         description: New value for field
                         example: "23.05"
       responses:
-        '200': 
-          description: Budget category updated successfully
+        200: 
+          description: Transaction updated successfully
+
+        401:
+          description: "Unauthorized"
 
 components:
   schemas:

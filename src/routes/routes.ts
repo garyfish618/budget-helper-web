@@ -16,7 +16,7 @@ const userController = new UserController()
 
 router.post("/register", validateUser, validateNonExistingUser, userController.createUser)
 router.post("/login", passport.authenticate('local', {session: false}), userController.loginUser)
-router.get("/budget-months", budgetMonthController.getAllBudgetMonths)
+router.get("/budget-months", passport.authenticate('jwt', { session: false }), budgetMonthController.getAllBudgetMonths)
 router.post("/budget-months", validateNewBudgetMonth, validateNonExistingBudgetMonth, budgetMonthController.createBudgetMonth)
 router.get("/budget-months/:id", validateValidBudgetMonthId, budgetMonthController.getBudgetMonth)
 router.patch("/budget-months/:id", validateValidBudgetMonthId, validateUpdateBudgetMonth, budgetMonthController.updateBudgetMonth)
