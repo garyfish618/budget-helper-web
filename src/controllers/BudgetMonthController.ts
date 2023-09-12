@@ -1,12 +1,14 @@
 import {Request, Response} from 'express';
 import BudgetMonth from '../models/BudgetMonth'
 import ResourceNotFound from '../exceptions/ResourceNotFound';
+import {User as PrismaUser} from "@prisma/client"
 import { Prisma } from '@prisma/client'
 
 export class BudgetMonthController {
     async getAllBudgetMonths(req: Request, res: Response, next: Function) {
         try {
-            return res.status(200).json(await BudgetMonth.getAllBudgetMonths())
+            const { id } = req.user as PrismaUser
+            return res.status(200).json(await BudgetMonth.getAllBudgetMonths(id))
 
         } catch (error) {
             next(error)

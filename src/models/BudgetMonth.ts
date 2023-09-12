@@ -41,9 +41,13 @@ export default class BudgetMonth {
         }
     }
 
-    static async getAllBudgetMonths(): Promise<BudgetMonth[] | null>  {
+    static async getAllBudgetMonths(userId: number): Promise<BudgetMonth[] | null>  {
         try {
-            const allBudgetMonths = await prisma.budgetMonth.findMany({include: {
+            const allBudgetMonths = await prisma.budgetMonth.findMany({
+                where: {
+                    userId
+                },
+                include: {
                 categories: {
                     include: {
                         transactions: true
