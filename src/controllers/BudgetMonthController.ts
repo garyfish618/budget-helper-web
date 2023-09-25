@@ -7,7 +7,7 @@ import { Prisma } from '@prisma/client'
 export class BudgetMonthController {
     async getAllBudgetMonths(req: Request, res: Response, next: Function) {
         try {
-            const { id } = req.user as PrismaUser
+            const { id } = await req.user as PrismaUser
             return res.status(200).json(await BudgetMonth.getAllBudgetMonths(id))
 
         } catch (error) {
@@ -17,9 +17,17 @@ export class BudgetMonthController {
 
     async getBudgetMonth(req: Request, res: Response, next: Function) {
         try {
-            const id:string = req.params.id 
-            if (id !== undefined) {
-                return res.status(200).json(await BudgetMonth.getBudgetMonth(parseInt(id)))
+            const { id } = await req.user  as PrismaUser
+            const monthId:string = req.params.id 
+            if (monthId !== undefined) {
+                const month = await BudgetMonth.getBudgetMonth(parseInt(monthId))
+                if (month?.userId != id) {
+                    console.log("HERE")
+
+                    return res.status(401).send("Unauthorized")
+                }
+
+                return res.status(200).json(await BudgetMonth.getBudgetMonth(parseInt(monthId)))
             }
         } catch (error: any) {
             if (error instanceof ResourceNotFound) {
@@ -33,7 +41,8 @@ export class BudgetMonthController {
     async createBudgetMonth(req: Request, res: Response, next: Function) {
         const { categoryTemplateIds, month, year } = req.body
         try {
-            const budgetMonthId = await BudgetMonth.createBudgetMonth(new BudgetMonth(parseInt(month), parseInt(year)))
+            const { id } = await req.user as PrismaUser
+            const budgetMonthId = await BudgetMonth.createBudgetMonth(new BudgetMonth(parseInt(month), parseInt(year), id))
             return res.status(201).json({id: budgetMonthId, month, year, categoryTemplateIds})
             
         } catch(error: any) {

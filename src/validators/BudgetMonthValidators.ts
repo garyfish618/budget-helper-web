@@ -62,11 +62,13 @@ function isValidUpdatesArray(value: any[]) {
 async function isUniqueInBudgetMonthTable(value:string, req:any ) {
     const month = parseInt(value)
     const year = parseInt(req.body.year)
+    const { id } = await req.user
 
     const budgetMonth = await prisma.budgetMonth.findUnique({where: {
-        monthYear: {
+        monthYearUser: {
             month: month,
-            year: year
+            year: year,
+            userId: id
 
         }
     }}) 

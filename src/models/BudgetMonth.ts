@@ -5,10 +5,12 @@ import ResourceNotFound from "../exceptions/ResourceNotFound";
 export default class BudgetMonth {
     month: number
     year: number
+    userId: number
 
-    constructor(month: number, year: number) {
+    constructor(month: number, year: number, userId: number) {
         this.month = month
         this.year = year
+        this.userId = userId
 
     }
 
@@ -64,6 +66,7 @@ export default class BudgetMonth {
         try {
             const createdMonth = await prisma.budgetMonth.create({
                 data: {
+                    userId: budgetMonth.userId,
                     month: budgetMonth.month,
                     year: budgetMonth.year,
                     extraIncome: "0.00"

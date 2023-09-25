@@ -25,7 +25,7 @@ model BudgetMonth {
   user        User  @relation(fields: [userId], references: [id])
   userId      Int
 
-  @@unique([month, year], name: "monthYear")
+  @@unique([month, year, userId], name: "monthYearUser")
 }
 
 model BudgetMonthCategory {
