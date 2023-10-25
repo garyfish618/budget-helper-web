@@ -1,5 +1,6 @@
-import { body, param, validationResult } from "express-validator"
+import { body, validationResult } from "express-validator"
 import { Request, Response, NextFunction } from 'express';
+import { isValidMoney } from "./UtilValidators";
 
 const validateNewCategoryTemplate = [
     body('name').exists().withMessage("Name must be present"),
@@ -38,10 +39,6 @@ async function isUniqueInCategoryTemplateTable(value:string, req:any) {
 }
 
 
-function isValidMoney(value:string) {
-    const moneyRegex = /^\d+(\.\d{1,2})?$/;
-    return moneyRegex.test(value);
-}
 
 export {
     validateNewCategoryTemplate,

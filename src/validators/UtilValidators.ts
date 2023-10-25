@@ -34,7 +34,19 @@ function isValidUpdatesArray(value: any[]) {
     return true
 }
 
+function isValidMoney(value:string) {
+    const moneyRegex = /^\d+(\.\d{1,2})?$/;
+    return moneyRegex.test(value);
+}
+
+function isValidDate(value:string) {
+    const dateRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/
+    return dateRegex.test(value)
+}
+
 export { 
+    isValidMoney,
+    isValidDate,
     validateUpdates,
     validateValidId
 }
