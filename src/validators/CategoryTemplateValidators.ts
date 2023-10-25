@@ -15,7 +15,7 @@ const validateNewCategoryTemplate = [
 ]
 
 const validateNonExistingCategoryTemplate = [
-    body('name').custom((value, { req }) => isUniqueInCategoryTemplateTable(value)),
+    body('name').custom((value, { req }) => isUniqueInCategoryTemplateTable(value, req)),
     (req: Request, res: Response, next:NextFunction) => {
         const erorrs = validationResult(req)
         if (!erorrs.isEmpty()) {
@@ -25,9 +25,10 @@ const validateNonExistingCategoryTemplate = [
     }
 ]
 
-async function isUniqueInCategoryTemplateTable(value:string) {
+async function isUniqueInCategoryTemplateTable(value:string, req:any) {
+    const { id: userId} = await req.user
 
-    const categoryTemplate = await prisma?.categoryTemplate.findUnique({where: {name: value}})
+    const categoryTemplate = await prisma?.categoryTemplate.findUnique({where: {nameUser: {name: value, userId}}})
 
     if (categoryTemplate) {
         throw new Error(`Category template with name ${value} already exists`)

@@ -1,20 +1,18 @@
 import prisma from "../../lib/prisma";
 import ResourceNotFound from "../exceptions/ResourceNotFound";
 import { CategoryTemplate as PrismaCategoryTemplate } from "@prisma/client";
-
-interface TemplateObject {
-    id: number,
-    name: string
-    amountBudgeted: string
-}
+import { Prisma } from '@prisma/client'
 
 export class CategoryTemplate {
     name: string
     amountBudgeted: string
+    userId: number
 
-    constructor(name: string, amountBudgeted: string) {
+
+    constructor(name: string, amountBudgeted: string, userId: number) {
         this.name = name
         this.amountBudgeted = amountBudgeted
+        this.userId = userId
 
     }
 
@@ -40,9 +38,13 @@ export class CategoryTemplate {
         }
     }
 
-    static async getAllCategoryTemplates(): Promise<PrismaCategoryTemplate[]> {
+    static async getAllCategoryTemplates(userId: number): Promise<PrismaCategoryTemplate[]> {
         try {
-            const records = await prisma.categoryTemplate.findMany()
+            const records = await prisma.categoryTemplate.findMany({
+                where: {
+                    userId
+                }
+            })
             return records
         } catch(error: any) {
             if (error instanceof ResourceNotFound) {
@@ -57,7 +59,7 @@ export class CategoryTemplate {
         try { 
             const createdTemplate = await prisma.categoryTemplate.create({
                 data: {
-                    userId: 1,
+                    userId: categoryTemplate.userId,
                     name: categoryTemplate.name,
                     amountBudgeted: categoryTemplate.amountBudgeted
 
@@ -71,4 +73,22 @@ export class CategoryTemplate {
 
         }
     } 
+
+    static async updateCategoryTemplate(categoryTemplateId: number, data: object) {
+        try {
+            const updatedCategoryTemplate = await prisma.categoryTemplate.update({
+                where: { id: categoryTemplateId },
+                data: data
+            })
+
+            return updatedCategoryTemplate
+
+        } catch(error: any) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                throw error
+            }  
+
+            throw new Error(`Failed to update category template with ID ${categoryTemplateId}. ${error.message}`)
+        }
+    }
 }

@@ -22,7 +22,6 @@ export class BudgetMonthController {
             if (monthId !== undefined) {
                 const month = await BudgetMonth.getBudgetMonth(parseInt(monthId))
                 if (month?.userId != id) {
-                    console.log("HERE")
 
                     return res.status(401).send("Unauthorized")
                 }
@@ -51,7 +50,8 @@ export class BudgetMonthController {
     }
 
     async updateBudgetMonth(req: Request, res: Response, next: Function) {
-        const { id } = req.params 
+        const id  = parseInt(req.params.id) 
+        const { id: userId} = await req.user as PrismaUser
         const { updates } = req.body
         
 
@@ -60,11 +60,21 @@ export class BudgetMonthController {
             for (let update of updates) {
                 data[update.field] = update.value
             }
+            let budgetMonth = await BudgetMonth.getBudgetMonth(id)
 
-            const budgetMonth = await BudgetMonth.updateBudgetMonth(parseInt(id), data)
+            if (budgetMonth?.userId != userId) {
+                return res.status(401).send("Unauthorized")
+            }
+
+            budgetMonth = await BudgetMonth.updateBudgetMonth(id, data)
+
             return res.status(200).json(budgetMonth)
         } catch(error: any) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                if (error.code === 'P2002') {
+                    return res.status(409).json({message: "Updates violate unique constraint"})
+                }
+
                 return res.status(404).json({message: "Budget month not found"})
             }
             

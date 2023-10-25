@@ -2,17 +2,6 @@ import { body, param, validationResult } from "express-validator"
 import prisma from "../../lib/prisma";
 import { Request, Response, NextFunction } from 'express';
 
-const validateValidBudgetMonthId = [
-    param('id').exists().isInt({ min: -2147483648, max: 2147483647 }).withMessage("ID is a required field"),
-    (req: Request, res: Response, next: NextFunction) => {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() })
-        }
-        return next()
-    }
-]
-
 const validateNewBudgetMonth = [ 
     body('month').custom(isValidMonth),
     body('year').custom(isValidYear),
@@ -26,6 +15,7 @@ const validateNewBudgetMonth = [
     }
 ]
 
+
 const validateNonExistingBudgetMonth = [
     body('month').custom((value, { req }) => isUniqueInBudgetMonthTable(value, req)),
     (req: Request, res: Response, next:NextFunction) => {
@@ -36,28 +26,6 @@ const validateNonExistingBudgetMonth = [
         return next()
     }
 ]
-
-const validateUpdateBudgetMonth = [
-    body('updates').isArray().withMessage("updates must be an array of updates").custom(isValidUpdatesArray),
-    (req: Request, res: Response, next:NextFunction) => {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() })
-        }
-        return next()
-    }
-]
-
-function isValidUpdatesArray(value: any[]) {
-    for (let obj of value) {
-        const keys = Object.keys(obj)
-        if(!(keys.length === 2 && keys.includes("field") && keys.includes("value"))) {
-            throw new Error(`Updates array is malformed`)
-        }
-    }
-
-    return true
-}
 
 async function isUniqueInBudgetMonthTable(value:string, req:any ) {
     const month = parseInt(value)
@@ -121,8 +89,6 @@ function isValidYear(value:number) {
 }
 
 export { 
-    validateValidBudgetMonthId,
     validateNewBudgetMonth,
     validateNonExistingBudgetMonth,
-    validateUpdateBudgetMonth 
 };
