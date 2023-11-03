@@ -2,7 +2,7 @@ import { body, validationResult } from "express-validator"
 import { Request, Response, NextFunction } from 'express';
 import { isValidDate, isValidMoney } from "./UtilValidators";
 
-const validateNewTransation = [
+const validateNewTransaction = [
     body('description').exists().withMessage("Description must be present"),
     body('transactionType').exists().withMessage("Transaction type must be present"),
     body('budgetCategoryId').exists().withMessage("Budget category ID must be present"),
@@ -19,3 +19,7 @@ const validateNewTransation = [
     }
 
 ]
+
+export {
+    validateNewTransaction
+}

@@ -1,6 +1,6 @@
 import {Request, Response} from 'express'
 import ResourceNotFound from '../exceptions/ResourceNotFound'
-import { CategoryTemplate } from '../models/CategoryTemplate'
+import CategoryTemplate  from '../models/CategoryTemplate'
 import {User as PrismaUser} from "@prisma/client"
 import { Prisma } from '@prisma/client'
 

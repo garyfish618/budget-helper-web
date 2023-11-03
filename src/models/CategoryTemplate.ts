@@ -3,7 +3,7 @@ import ResourceNotFound from "../exceptions/ResourceNotFound";
 import { CategoryTemplate as PrismaCategoryTemplate } from "@prisma/client";
 import { Prisma } from '@prisma/client'
 
-export class CategoryTemplate {
+export default class CategoryTemplate {
     name: string
     amountBudgeted: string
     userId: number
